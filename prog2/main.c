@@ -355,13 +355,10 @@ int deadlock(void)
         /* If the process is using a resource*/
         if(rstate[i+1] != 0){
             prn[MAXPROC + i].e = rstate[i+1];
-            /* If resource has processes waiting*/
-            if(nrw[i+1] != 0){
-                prn[rw[i][0] - 1].e = i+MAXPROC;
-            }
         }
-        else{
-            prn[MAXPROC + i].e = -1;
+        /* If resource has processes waiting*/
+        if(nrw[i+1] != 0){
+            prn[rw[i][0] - 1].e = i+MAXPROC;
         }
     }
     
