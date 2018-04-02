@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+int isdigit( int arg );
+
 #define MAXSTEP 50    /* max action steps for any process */
 #define MAXPROC 50    /* max processes in any simulation */
 #define MAXRSRC 50    /* max resources in any simulation */
@@ -53,7 +55,7 @@ struct process {
     int endtime;    /* time process ended */
 } proc[MAXPROC+1];
 
-int trace;        /* trace option value */
+int nTrace;        /* nTrace option value */
 
 int simno;        /* simulation number */
 int t;            /* simulation time */
@@ -70,7 +72,7 @@ int nr;            /* total # of resources (1..MAXRSRC) */
 /* list for the queue), but in this case, we're not so concerned with */
 /* speed.                                                             */
 /*--------------------------------------------------------------------*/
-int nready;        /* # of ready processes (0..np) */
+int nready;             /* # of ready processes (0..np) */
 int ready[MAXPROC];    /* the ready queue (each in 1..np) */
 
 
@@ -129,26 +131,37 @@ void statedump(void)
     for(i=1;i<=np;i++) {
         printf("    Process %d: ", i);
         switch(proc[i].state) {
-            case -1: printf("finished\n"); break;
-            case 0: printf("ready/running\n"); break;
-            default: printf("waiting on resource %d\n", proc[i].state); break;
+            case -1: 
+                printf("finished\n"); 
+                break;
+            case 0: 
+                printf("ready/running\n"); 
+                break;
+            default: 
+                printf("waiting on resource %d\n", proc[i].state); 
+                break;
         }
     }
+
     printf("\nResources:\n");
-    for(i=1;i<=nr;i++) {
+    for(i=1; i<=nr; i++) {
         printf("    Resource %d: ", i);
-        if (rstate[i] == 0)
+        if (rstate[i] == 0) {
             printf("unused\n");
+        }
         else {
             printf("owned by process %d; ", rstate[i]);
-            if (nrw[i] == 0)
+            if (nrw[i] == 0) {
                 printf("awaited by no processes.\n");
-            else if (nrw[i] == 1)
+            }
+            else if (nrw[i] == 1) {
                 printf("awaited for by process %d\n", rw[i][0]);
+            }
             else {
                 printf("awaited for by processes %d", rw[i][0]);
-                for(j=1;j<nrw[i];j++)
+                for(j=1; j<nrw[i]; j++) {
                     printf(", %d", rw[i][j]);
+                }
                 putchar('\n');
             }
         }
@@ -180,20 +193,22 @@ int getinput(void)
         return -1;
     }
     
-    if (np == 0 && nr== 0) return 0;    /* end of input? */
+    if (np == 0 && nr== 0) {
+        return 0;    /* end of input? */
+    }
     
-    for (i=1;i<=np;i++) {        /* get data for processes 1 ... np */
+    for (i=1; i<=np; i++) {        /* get data for processes 1 ... np */
         r = fscanf(f,"%d",&proc[i].ns);    /* # of steps for process i */
         if (r != 1) {
-            fprintf(stderr,"Error reading number of actions for process %d\n",
-                    i);
+            fprintf(stderr,"Error reading number of actions for process %d\n", i);
             return -1;
         }
         
         c = fgetc(f);
-        for (j=0;j<proc[i].ns;j++) {        /* get action steps */
-            while (c == ' ' || c == '\t')    /* skip blanks and tabs */
+        for (j=0; j<proc[i].ns; j++) {        /* get action steps */
+            while (c == ' ' || c == '\t') { /* skip blanks and tabs */
                 c = fgetc(f);
+            }
             if (c != 'L' && c != 'U' && c != 'C') {
                 fprintf(stderr,"Bad action for process %d step %d.\n", i, j);
                 return -1;
@@ -203,51 +218,51 @@ int getinput(void)
             got1 = 0;                /* we've got no digits yet */
             v = 0;
             c = fgetc(f);
+
             while(isdigit(c)) {
                 got1 = 1;
                 oldv = v;
                 v = v * 10 + c - '0';
                 if ((v - c + '0') / 10 != oldv) {
-                    fprintf(stderr,
-                            "Overflow reading n for process %d step %d.\n",
-                            i, j);
+                    fprintf(stderr, "Overflow reading n for process %d step %d.\n", i, j);
                     return -1;
                 }
                 c = fgetc(f);
             }
+
             if (!got1) {
                 fprintf(stderr,"Missing value for process %d step %d\n", i, j);
                 return -1;
             }
+
             proc[i].n[j] = v;
+
             switch(proc[i].a[j]) {
                 case 'L':
                 case 'U':
                     if (proc[i].n[j] < 1 || proc[i].n[j] > nr) {
-                        fprintf(stderr,"Bad value for process %d "
-                                "step %d.\n", i, j);
+                        fprintf(stderr, "Bad value for process %d step %d.\n", i, j);
                         return -1;
                     }
                     break;
                 case 'C':
                     if (proc[i].n[j] < 1) {
-                        fprintf(stderr,"Bad value for process %d "
-                                "step %d.\n", i, j);
+                        fprintf(stderr, "Bad value for process %d step %d.\n", i, j);
                         return -1;
                     }
                     break;
                 default:    /* this should not be possible */
-                    fprintf(stderr,"Unrecognized action character for "
-                            "process %d step %d.\n", i, j);
+                    fprintf(stderr,"Unrecognized action character for process %d step %d.\n", i, j);
                     return -1;
             }
         }
         
-        while (c == ' ' || c == '\t')    /* skip trailing blanks, tabs */
+        while (c == ' ' || c == '\t') {    /* skip trailing blanks, tabs */
             c = fgetc(f);
+        }
+
         if (c != '\n') {
-            fprintf(stderr,"Unrecognized input after actions for "
-                    "process %d.\n", i);
+            fprintf(stderr,"Unrecognized input after actions for process %d.\n", i);
             return -1;
         }
     }
@@ -370,7 +385,7 @@ int main(int argc, char *argv[])
     /*-----------------*/
     while (argc > 1 && argv[1][0] == '-') {
         if (!strcmp(argv[1],"-v")) {
-            trace++;
+            nTrace++;
             argc--;
             argv++;
             continue;
@@ -399,8 +414,10 @@ int main(int argc, char *argv[])
         /*---------------------------------*/
         /* Get the next set of input data. */
         /*---------------------------------*/
-        if (getinput() != 1)
+        if (getinput() != 1) {
             break;
+        }
+
         t = 0;                /* set simulation time */
         
         /*---------------------------------*/
@@ -412,6 +429,7 @@ int main(int argc, char *argv[])
             proc[i].runtime = 0;        /* no time used yet */
             ready[i-1] = i;            /* setup initial ready queue */
         }
+
         nready = np;
         
         for (i=1;i<=nr;i++) {        /* initialize each resource */
@@ -426,18 +444,24 @@ int main(int argc, char *argv[])
         /*-----------------------------------------------------------*/
         for(;;) {
             dd = deadlock();        /* check for deadlock */
-            if (dd)            /* if it was detected */
+            if (dd) {           /* if it was detected */
                 break;
+            }
             
             /*---------------------------------------------*/
             /* Get a process from the ready queue to run.  */
             /* If there are no ready processes, we must be */
             /* done or deadlocked.                         */
             /*---------------------------------------------*/
-            if (nready == 0) break;        /* no ready processes */
+            if (nready == 0)  {
+                break;        /* no ready processes */
+            }
+
             running = ready[0];            /* first ready process */
-            for (i=1;i<nready;i++)        /* slow queue removal, */
+            for (i=1;i<nready;i++) {        /* slow queue removal, */
                 ready[i-1] = ready[i];        /* but who cares? */
+            }
+
             nready--;
             
             /*--------------------------------------*/
@@ -447,7 +471,7 @@ int main(int argc, char *argv[])
             a = proc[running].a[ip];
             n = proc[running].n[ip];
             
-            if (trace) {
+            if (nTrace) {
                 printf("%d: ", t);
                 printf("process %d: ", running);
                 printf("%c%d\n", a, n);
@@ -469,7 +493,7 @@ int main(int argc, char *argv[])
                     /* Time does NOT increase here!      */
                     /*-----------------------------------*/
                 } else {
-                    if (trace) printf("\t(resource %d unavailable)\n", n);
+                    if (nTrace) printf("\t(resource %d unavailable)\n", n);
                     makewait(running,n);        /* add to waiters */
                     proc[running].state = n;        /* mark proc blocked */
                 }
@@ -480,7 +504,10 @@ int main(int argc, char *argv[])
             /*-------------------------------------------*/
             else if (a == 'U') {
                 rstate[n] = 0;        /* resource unused now */
-                if (trace) printf("\t(resource %d released)\n", n);
+                
+                if (nTrace) { 
+                    printf("\t(resource %d released)\n", n);
+                }
                 
                 /*---------------------------------------------*/
                 /* If any processes are waiting on the reource */
@@ -489,7 +516,9 @@ int main(int argc, char *argv[])
                     /*--------------------------------------*/
                     /* Make the first waiting process ready */
                     /*--------------------------------------*/
-                    if (trace) printf("\t(process %d unblocked)\n", rw[n][0]);
+                    if (nTrace) {
+                        printf("\t(process %d unblocked)\n", rw[n][0]);
+                    }
                     
                     /* XXX - TO BE WRITTEN */
                 }
@@ -500,7 +529,9 @@ int main(int argc, char *argv[])
                 if (ip+1 == proc[running].ns) {
                     proc[running].state = -1;        /* done */
                     proc[running].endtime = t+1;    /* end time */
-                    if (trace) printf("\t(process %d terminated)\n", running);
+                    if (nTrace) {
+                        printf("\t(process %d terminated)\n", running);
+                    }
                 } else {
                     proc[running].ip++;
                     makeready(running);
@@ -534,7 +565,7 @@ int main(int argc, char *argv[])
             printf("All processes successfully terminated.\n");
             for (i=1;i<=np;i++) {
                 printf("Process %d: run time = %d, ended at %d\n",
-                       i, proc[i].runtime, proc[i].endtime);
+                    i, proc[i].runtime, proc[i].endtime);
             }
         }
         
