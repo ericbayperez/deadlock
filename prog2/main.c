@@ -332,11 +332,34 @@ int deadlock(void)
     int drsrc[MAXRSRC];        /* IDs of resources involved in a deadlock */
     int ndrsrc;
     
+    
+    /*    rstate[4] = 3        process 3 owns resource 4           */
+    /*    nrw[4] = 2        2 procs are waiting for resource 4  */
+    /*    rw[4][0] = 1        process 1 is first waiting proc     */
+    /*    rw[4][1] = 2        process 2 is second waiting proc    */
+    
     /*-------------------------------*/
     /* Construct the resource graph. */
     /*-------------------------------*/
     
     /* XXX - TO BE WRITTEN */
+    
+    /* Assign Resources their Processes */
+    for(i = 0; i < nr; i++){
+        /* If the process is using a resource*/
+        if(rstate[i+1] != 0){
+            prn[MAXPROC + i].e = rstate[i+1];
+        }
+        else{
+            prn[MAXPROC + i].e = -1;
+        }
+        /* If resource has processes waiting*/
+        if(nrw[i+1] != 0){
+            prn[rw[i][0] - 1].e = i+MAXPROC;
+            prn[rw[i][0] - 1].v = 0;
+        }
+        prn[MAXPROC + i].v = 0;
+    }
     
     /*-----------------------------------------------------------------*/
     /* Check for a cycle starting at every possible node in the graph. */
