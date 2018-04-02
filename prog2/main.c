@@ -344,21 +344,25 @@ int deadlock(void)
     
     /* XXX - TO BE WRITTEN */
     
+    /*Initialize all nodes to -1 and not visited*/
+    for(i =0; i < MAXPROC + MAXRSRC; i++){
+        prn[i].e = -1;
+        prn[i].v = 0;
+    }
+    
     /* Assign Resources their Processes */
     for(i = 0; i < nr; i++){
         /* If the process is using a resource*/
         if(rstate[i+1] != 0){
             prn[MAXPROC + i].e = rstate[i+1];
+            /* If resource has processes waiting*/
+            if(nrw[i+1] != 0){
+                prn[rw[i][0] - 1].e = i+MAXPROC;
+            }
         }
         else{
             prn[MAXPROC + i].e = -1;
         }
-        /* If resource has processes waiting*/
-        if(nrw[i+1] != 0){
-            prn[rw[i][0] - 1].e = i+MAXPROC;
-            prn[rw[i][0] - 1].v = 0;
-        }
-        prn[MAXPROC + i].v = 0;
     }
     
     /*-----------------------------------------------------------------*/
