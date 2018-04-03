@@ -290,6 +290,15 @@ int cycle(int s)
     
     /* XXX - TO BE WRITTEN */
     
+    /*START OUR CODE*/
+    
+    
+    
+    
+    
+    
+    /*END OUR CODE*/
+    
     return 0;            /* DUMMY FUNCTION -- ALWAYS RETURNS 0 */
 }
 
@@ -344,6 +353,8 @@ int deadlock(void)
     
     /* XXX - TO BE WRITTEN */
     
+    /*START OUR CODE*/
+    
     /*Initialize all nodes to -1 and not visited*/
     for(i =0; i < MAXPROC + MAXRSRC; i++){
         prn[i].e = -1;
@@ -361,6 +372,8 @@ int deadlock(void)
             prn[rw[i][0] - 1].e = i+MAXPROC;
         }
     }
+    
+    /*END OUR CODE*/
     
     /*-----------------------------------------------------------------*/
     /* Check for a cycle starting at every possible node in the graph. */
