@@ -301,23 +301,27 @@ int cycle(int processIndex)
     /*Set node at process index as visited*/
     prn[processIndex].v = 1;
     
-    int Q = prn[processIndex].e;
-    
-    if(Q == -1){
-        return 0;
-    }
-    
-    else if(Q == processIndex){
-        return 1;
-    }
-    
-    else{
-        
-    }
-    
-    
-    
-    
+    /* q is like a "next node" */
+    int current = processIndex;
+    while(1) {
+        current = prn[current].e;
+        /* Doesn't point to a process or resource */
+        if (current == -1) {
+            return 0;
+        }
+        /* Cycle is detected */
+        else if (current == processIndex) {
+            return 1;
+        }
+        /* Cycle is detected but did not begin with P */
+        else if (prn[current].v != 0) {
+            return 0;
+        }
+        /* Cycle not detected yet, mark node as visited */
+        else {
+            prn[current].v = 1;
+        }
+    }    
     /*END OUR CODE*/
     
     return 0;            /* DUMMY FUNCTION -- ALWAYS RETURNS 0 */
