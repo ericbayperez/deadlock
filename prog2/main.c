@@ -304,19 +304,25 @@ int cycle(int processIndex)
     /* q is like a "next node" */
     int current = processIndex;
     while(1) {
+        
+        /*Get the value of the pointed to node*/
         current = prn[current].e;
+        
         /* Doesn't point to a process or resource */
         if (current == -1) {
             return 0;
         }
+        
         /* Cycle is detected */
         else if (current == processIndex) {
             return 1;
         }
+        
         /* Cycle is detected but did not begin with P */
         else if (prn[current].v != 0) {
             return 0;
         }
+        
         /* Cycle not detected yet, mark node as visited */
         else {
             prn[current].v = 1;
@@ -330,17 +336,66 @@ int cycle(int processIndex)
 /*---------------------------------------------------------*/
 /* Display IDs of processes in cycle starting with node i. */
 /*---------------------------------------------------------*/
-void putpcycle(int i)
+void putpcycle(int processIndex)
 {
+    
+    
+    /*Set current = processIndex
+    X: Print process current's identification
+    Set current = prn[current].e    (follow edge to resource wanted by Q)
+    Set current = prn[current].e    (follow edge to process owning resource Q)
+    If current is not processIndex, repeat from X.*/
     /* XXX - TO BE WRITTEN */
+    
+    /*START OUR CODE*/
+    int current = processIndex;
+    int flag = 1;
+    
+    while(flag){
+        /*TODO FIX THIS PRINT*/
+        printf("Q.ID = %d\n", current);
+        current = prn[current].e;
+        current = prn[current].e;
+        if(current == processIndex){
+            flag = 0;
+        }
+    
+    }
+    
+    
+    /*END OUR CODE*/
 }
 
 /*---------------------------------------------------------*/
 /* Display IDs of resources in cycle starting with node i. */
 /*---------------------------------------------------------*/
-void putrcycle(int i)
+void putrcycle(int processIndex)
 {
     /* XXX - TO BE WRITTEN */
+    
+    /*Set R = rg[P].e
+    Set Q = R
+     Y: Print resource Q's identification
+     Set Q = rg[Q].e    (follow edge to process owning resource Q)
+     Set Q = rg[Q].e    (follow edge to resource wanted by process Q)
+     If Q is not R, repeat from Y.*/
+
+    /*START OUR CODE*/
+    int resource = prn[processIndex].e;
+    int current = resource;
+    int flag = 1;
+    
+    while(flag) {
+        /*TODO FIX THIS PRINT*/
+        printf("Q.ID = %d\n", current);
+        current = prn[current].e;  // resource -> process
+        current = prn[current].e; // process -> resource
+        
+        if (current == resource) {
+            flag = 0;
+        }
+    }
+    /*END OUR CODE*/
 }
 
 /*----------------------------------------------------------------*/
@@ -383,7 +438,7 @@ int deadlock(void)
     /*Initialize all nodes to -1 and not visited*/
     for(i =0; i < MAXPROC + MAXRSRC; i++){
         /*TODO CHANGE THIS TO -1 AFTER DEBUGGING*/
-        prn[i].e = -2;
+        prn[i].e = -1;
         prn[i].v = 0;
     }
     
