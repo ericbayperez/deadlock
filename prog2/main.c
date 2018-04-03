@@ -285,14 +285,35 @@ int getinput(void)
 /* csci4500 directory on Loki. Make certain you understand how the   */
 /* algorithm works before attempting to implement it!                */
 /*-------------------------------------------------------------------*/
-int cycle(int s)
+int cycle(int processIndex)
 {
     
     /* XXX - TO BE WRITTEN */
     
     /*START OUR CODE*/
     
+    /*Set all process and resource nodes to unvisited*/
+    int i;
+    for(i = 0; i < MAXPROC + MAXRSRC; i++){
+        prn[i].v = 0;
+    }
     
+    /*Set node at process index as visited*/
+    prn[processIndex].v = 1;
+    
+    int Q = prn[processIndex].e;
+    
+    if(Q == -1){
+        return 0;
+    }
+    
+    else if(Q == processIndex){
+        return 1;
+    }
+    
+    else{
+        
+    }
     
     
     
@@ -357,7 +378,8 @@ int deadlock(void)
     
     /*Initialize all nodes to -1 and not visited*/
     for(i =0; i < MAXPROC + MAXRSRC; i++){
-        prn[i].e = -1;
+        /*TODO CHANGE THIS TO -1 AFTER DEBUGGING*/
+        prn[i].e = -2;
         prn[i].v = 0;
     }
     
