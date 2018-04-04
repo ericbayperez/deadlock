@@ -11,4 +11,12 @@ public class Process {
 		actions = a;
 	}
 
+	@Override
+	public String toString() {
+		String s = "[Process]\n";
+		for (Action a : actions) {
+			s += String.format("    %s\n", a);
+		}
+		return s;
+	}
 }

@@ -2,6 +2,9 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+
+import java.util.ArrayList;
+
 public class DeadlockDriver {
 
 
@@ -11,8 +14,8 @@ public class DeadlockDriver {
 		/* arguments from command line */
 		boolean verbose = false;
 		String filename = "";
-	
-		
+
+
 		if (args.length == 1) {
 			filename = args[0];
 		}
@@ -26,7 +29,12 @@ public class DeadlockDriver {
 		}
 
 		InputReader reader = new InputReader(filename);
-		reader.read();
+		ArrayList<DeadlockProblem> problemList = reader.read();
+
+		for (DeadlockProblem dp : problemList) {
+			System.out.println(dp);
+		}
+		
 		System.out.println("End of main.");
 
 	}
