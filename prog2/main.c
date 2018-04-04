@@ -605,6 +605,18 @@ int main(int argc, char *argv[])
                 if (rstate[n] == 0) {
                     
                     /* XXX - TO BE WRITTEN */
+                    t++;
+                    rstate[n] = running;
+                    
+                    if (ip+1 != proc[running].ns) {
+                        proc[running].ip++;
+                        makeready(running);
+                    }
+                    else {
+                        proc[running].state = -1;        /* done */
+                        proc[running].endtime = t+1;    /* end time */
+                    }
+                    proc[running].runtime++;
                     
                     /*-----------------------------------*/
                     /* If the resource is not available. */
@@ -639,6 +651,11 @@ int main(int argc, char *argv[])
                     }
                     
                     /* XXX - TO BE WRITTEN */
+                    proc[rw[n][0]].state = 0;
+                    makeready(rw[n][0]);
+                    rw[n][0] = 0;
+                    nrw[n]--;
+                    
                 }
                 
                 /*----------------------------------------*/
@@ -665,6 +682,24 @@ int main(int argc, char *argv[])
                 n--;            /* reduce remaining computation time */
                 
                 /* XXX - TO BE WRITTEN */
+                /*START OUR CODE*/
+                proc[running].runtime++;
+                t++;
+                
+                if (n!=0) {
+                    proc[running].n[ip] = n;
+                    makeready(running);
+                    
+                }
+                else if (ip+1 == proc[running].ns){
+                        proc[running].state = -1;
+                        proc[running].endtime = t;
+                }
+                else {
+                    proc[running].ip++;
+                    makeready(running);
+                }
+                /*END OUR CODE*/
             }
             
             /*----------------------------------------------------------*/
