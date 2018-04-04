@@ -613,8 +613,8 @@ int main(int argc, char *argv[])
                         makeready(running);
                     }
                     else {
-                        proc[running].state = -1;        /* done */
-                        proc[running].endtime = t+1;    /* end time */
+                        proc[running].state = -1;
+                        proc[running].endtime = t+1;
                     }
                     proc[running].runtime++;
                     
@@ -662,8 +662,8 @@ int main(int argc, char *argv[])
                 /* The currently running process advances */
                 /*----------------------------------------*/
                 if (ip+1 == proc[running].ns) {
-                    proc[running].state = -1;        /* done */
-                    proc[running].endtime = t+1;    /* end time */
+                    proc[running].state = -1;
+                    proc[running].endtime = t+1;
                     if (nTrace) {
                         printf("\t(process %d terminated)\n", running);
                     }
@@ -691,13 +691,14 @@ int main(int argc, char *argv[])
                     makeready(running);
                     
                 }
-                else if (ip+1 == proc[running].ns){
-                        proc[running].state = -1;
-                        proc[running].endtime = t;
-                }
-                else {
+                else if (ip+1 != proc[running].ns){
                     proc[running].ip++;
                     makeready(running);
+                }
+                else {
+                    proc[running].state = -1;
+                    proc[running].endtime = t;
+                    
                 }
                 /*END OUR CODE*/
             }
