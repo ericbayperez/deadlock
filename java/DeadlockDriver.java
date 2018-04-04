@@ -11,8 +11,8 @@ public class DeadlockDriver {
 		/* arguments from command line */
 		boolean verbose = false;
 		String filename = "";
+	
 		
-
 		if (args.length == 1) {
 			filename = args[0];
 		}

@@ -1,10 +1,20 @@
 public class Action {
 	
-	public char action;
-	public int count;
+	public char type;
+	public int value;
 
-	public Action(char a, int c) {
-		action = a;
-		count = c;
+	public Action() {
+		type = ' ';
+		value = -1;
+	}
+
+	public Action(char t, int v) {
+		type = t;
+		value = v;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("[Action] %c%d", type, value);
 	}
 }
